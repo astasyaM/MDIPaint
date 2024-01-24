@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace MDIPaint
 {
-    public partial class Form1 : Form
+    public partial class DocumentForm : Form
     {
-        public Form1()
+        public DocumentForm()
         {
             InitializeComponent();
         }
