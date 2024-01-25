@@ -37,6 +37,7 @@
             this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.DoubleBuffered = true;
             this.Name = "DocumentForm";
             this.Text = "DocumentForm";
             this.ResumeLayout(false);

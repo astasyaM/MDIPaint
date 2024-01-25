@@ -1,6 +1,6 @@
 ﻿namespace MDIPaint
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Обязательная переменная конструктора.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.новыйToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,6 +89,7 @@
             this.новыйToolStripMenuItem.Name = "новыйToolStripMenuItem";
             this.новыйToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.новыйToolStripMenuItem.Text = "Новый";
+            this.новыйToolStripMenuItem.Click += new System.EventHandler(this.новыйToolStripMenuItem_Click);
             // 
             // открытьToolStripMenuItem
             // 
@@ -115,12 +116,14 @@
             this.рисунокToolStripMenuItem.Name = "рисунокToolStripMenuItem";
             this.рисунокToolStripMenuItem.Size = new System.Drawing.Size(65, 20);
             this.рисунокToolStripMenuItem.Text = "Рисунок";
+            this.рисунокToolStripMenuItem.Click += new System.EventHandler(this.рисунокToolStripMenuItem_Click);
             // 
             // размерХолстаToolStripMenuItem
             // 
             this.размерХолстаToolStripMenuItem.Name = "размерХолстаToolStripMenuItem";
             this.размерХолстаToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.размерХолстаToolStripMenuItem.Text = "Размер холста...";
+            this.размерХолстаToolStripMenuItem.Click += new System.EventHandler(this.размерХолстаToolStripMenuItem_Click);
             // 
             // окноToolStripMenuItem
             // 
@@ -207,8 +210,8 @@
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(86, 22);
-            this.toolStripLabel1.Text = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(41, 22);
+            this.toolStripLabel1.Text = "Кисть:";
             // 
             // toolStripTextBox1
             // 
@@ -222,6 +225,7 @@
             this.красныйToolStripMenuItem.Name = "красныйToolStripMenuItem";
             this.красныйToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.красныйToolStripMenuItem.Text = "Красный";
+            this.красныйToolStripMenuItem.Click += new System.EventHandler(this.красныйToolStripMenuItem_Click);
             // 
             // синийToolStripMenuItem
             // 
@@ -229,6 +233,7 @@
             this.синийToolStripMenuItem.Name = "синийToolStripMenuItem";
             this.синийToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.синийToolStripMenuItem.Text = "Синий";
+            this.синийToolStripMenuItem.Click += new System.EventHandler(this.синийToolStripMenuItem_Click);
             // 
             // зелёныйToolStripMenuItem
             // 
@@ -236,12 +241,14 @@
             this.зелёныйToolStripMenuItem.Name = "зелёныйToolStripMenuItem";
             this.зелёныйToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.зелёныйToolStripMenuItem.Text = "Зелёный";
+            this.зелёныйToolStripMenuItem.Click += new System.EventHandler(this.зелёныйToolStripMenuItem_Click);
             // 
             // другойToolStripMenuItem
             // 
             this.другойToolStripMenuItem.Name = "другойToolStripMenuItem";
             this.другойToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.другойToolStripMenuItem.Text = "Другой...";
+            this.другойToolStripMenuItem.Click += new System.EventHandler(this.другойToolStripMenuItem_Click);
             // 
             // выходToolStripMenuItem
             // 
