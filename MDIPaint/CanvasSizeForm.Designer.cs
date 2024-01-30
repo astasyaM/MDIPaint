@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.HeightSize = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.WidthSize = new System.Windows.Forms.TextBox();
             this.OkButton = new System.Windows.Forms.Button();
             this.CancelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // textBox1
+            // HeightSize
             // 
-            this.textBox1.Location = new System.Drawing.Point(245, 32);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(61, 20);
-            this.textBox1.TabIndex = 0;
+            this.HeightSize.Location = new System.Drawing.Point(245, 32);
+            this.HeightSize.Name = "HeightSize";
+            this.HeightSize.Size = new System.Drawing.Size(61, 20);
+            this.HeightSize.TabIndex = 0;
             // 
             // label1
             // 
@@ -61,12 +61,12 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "Ширина:";
             // 
-            // textBox2
+            // WidthSize
             // 
-            this.textBox2.Location = new System.Drawing.Point(87, 32);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(61, 20);
-            this.textBox2.TabIndex = 2;
+            this.WidthSize.Location = new System.Drawing.Point(87, 32);
+            this.WidthSize.Name = "WidthSize";
+            this.WidthSize.Size = new System.Drawing.Size(61, 20);
+            this.WidthSize.TabIndex = 2;
             // 
             // OkButton
             // 
@@ -77,15 +77,18 @@
             this.OkButton.TabIndex = 4;
             this.OkButton.Text = "ОК";
             this.OkButton.UseVisualStyleBackColor = true;
+            this.OkButton.Click += new System.EventHandler(this.OkButton_Click);
             // 
             // CancelButton
             // 
+            this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.CancelButton.Location = new System.Drawing.Point(238, 83);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(73, 22);
             this.CancelButton.TabIndex = 5;
             this.CancelButton.Text = "Отмена";
             this.CancelButton.UseVisualStyleBackColor = true;
+            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
             // 
             // CanvasSizeForm
             // 
@@ -97,9 +100,9 @@
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.OkButton);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.WidthSize);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.HeightSize);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -113,10 +116,10 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox HeightSize;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox WidthSize;
         private System.Windows.Forms.Button OkButton;
         private System.Windows.Forms.Button CancelButton;
     }
