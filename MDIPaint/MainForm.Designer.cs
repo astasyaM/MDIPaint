@@ -66,6 +66,9 @@
             this.toolStripButton3 = new System.Windows.Forms.ToolStripSplitButton();
             this.стандартнаяЗвездаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.настроитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.ZoomIn = new System.Windows.Forms.ToolStripButton();
+            this.ZoomOut = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -108,18 +111,21 @@
             this.открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
             this.открытьToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.открытьToolStripMenuItem.Text = "Открыть...";
+            this.открытьToolStripMenuItem.Click += new System.EventHandler(this.открытьToolStripMenuItem_Click);
             // 
             // сохранитьToolStripMenuItem
             // 
             this.сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
             this.сохранитьToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.сохранитьToolStripMenuItem.Text = "Сохранить";
+            this.сохранитьToolStripMenuItem.Click += new System.EventHandler(this.сохранитьToolStripMenuItem_Click);
             // 
             // сохранитьКакToolStripMenuItem
             // 
             this.сохранитьКакToolStripMenuItem.Name = "сохранитьКакToolStripMenuItem";
             this.сохранитьКакToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.сохранитьКакToolStripMenuItem.Text = "Сохранить как...";
+            this.сохранитьКакToolStripMenuItem.Click += new System.EventHandler(this.сохранитьКакToolStripMenuItem_Click);
             // 
             // выходToolStripMenuItem
             // 
@@ -210,7 +216,10 @@
             this.toolStripSeparator5,
             this.toolStripButton4,
             this.toolStripSeparator6,
-            this.toolStripButton1});
+            this.toolStripButton1,
+            this.toolStripSeparator7,
+            this.ZoomIn,
+            this.ZoomOut});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(685, 25);
@@ -374,6 +383,31 @@
             this.настроитьToolStripMenuItem.Text = "Настроить...";
             this.настроитьToolStripMenuItem.Click += new System.EventHandler(this.настроитьToolStripMenuItem_Click);
             // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 25);
+            // 
+            // ZoomIn
+            // 
+            this.ZoomIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ZoomIn.Image = ((System.Drawing.Image)(resources.GetObject("ZoomIn.Image")));
+            this.ZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ZoomIn.Name = "ZoomIn";
+            this.ZoomIn.Size = new System.Drawing.Size(23, 22);
+            this.ZoomIn.Text = "toolStripButton5";
+            this.ZoomIn.Click += new System.EventHandler(this.ZoomIn_Click);
+            // 
+            // ZoomOut
+            // 
+            this.ZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("ZoomOut.Image")));
+            this.ZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ZoomOut.Name = "ZoomOut";
+            this.ZoomOut.Size = new System.Drawing.Size(23, 22);
+            this.ZoomOut.Text = "toolStripButton6";
+            this.ZoomOut.Click += new System.EventHandler(this.ZoomOut_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -433,6 +467,9 @@
         private System.Windows.Forms.ToolStripSplitButton toolStripButton3;
         private System.Windows.Forms.ToolStripMenuItem стандартнаяЗвездаToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem настроитьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripButton ZoomIn;
+        private System.Windows.Forms.ToolStripButton ZoomOut;
     }
 }
 

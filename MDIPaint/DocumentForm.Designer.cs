@@ -40,6 +40,7 @@
             this.DoubleBuffered = true;
             this.Name = "DocumentForm";
             this.Text = "DocumentForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DocumentForm_FormClosing);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DocumentForm_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DocumentForm_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DocumentForm_MouseUp);

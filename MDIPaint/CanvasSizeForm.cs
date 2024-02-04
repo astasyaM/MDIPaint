@@ -25,6 +25,7 @@ namespace MDIPaint
             int height = Int32.Parse(HeightSize.Text);
             frm.ResizeBitmap(width, height);
             Close();
+            
         }
 
         private void CancelButton_Click(object sender, EventArgs e)

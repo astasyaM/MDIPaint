@@ -6,8 +6,9 @@ using System.Windows.Forms;
 
 namespace MDIPaint
 {
-    internal static class Program
+    static class Program
     {
+        public static MainForm MainForm;
         /// <summary>
         /// Главная точка входа для приложения.
         /// </summary>
@@ -16,7 +17,8 @@ namespace MDIPaint
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            MainForm = new MainForm();
+            Application.Run(MainForm);
         }
     }
 }

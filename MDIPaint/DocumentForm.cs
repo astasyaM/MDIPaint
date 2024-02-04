@@ -8,22 +8,43 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace MDIPaint
 {
     public partial class DocumentForm : Form
     {
+        public static string lastSavedFilePath;
         private int x, y;
+        public bool HasPaint = false;
         public static Bitmap bitmap;
         public static int Beams {  get; set; }
         public static double R {  get; set; }
         public static double r { get; set; }
+        public static int CurrentWidth { get; set; }
+        public static int CurrentHeight {  get; set; }
+
+        public DocumentForm(Bitmap image)
+        {
+            InitializeComponent();
+            lastSavedFilePath = null;
+            CurrentHeight = image.Height;
+            CurrentWidth = image.Width;
+            bitmap = new Bitmap(image, CurrentWidth, CurrentHeight);
+            Beams = 5;
+            R = 50;
+            r = 25;
+        }
 
         public DocumentForm()
         {
             InitializeComponent();
-            bitmap = new Bitmap(500, 500);
+            lastSavedFilePath = null;
+            CurrentWidth = 300;
+            CurrentHeight = 300;
+            bitmap = new Bitmap(CurrentWidth, CurrentHeight);
             Beams = 5;
             R = 50;
             r = 25;
@@ -32,15 +53,36 @@ namespace MDIPaint
 
         public void ResizeBitmap(int width, int height)
         {
-            Bitmap result = new Bitmap(width, height);
-            using (Graphics g = Graphics.FromImage(result))
+            CurrentWidth = width; CurrentHeight = height;  
+
+            var prev = new Bitmap(bitmap);
+
+            bitmap = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(bitmap))
             {
-                g.DrawImage(bitmap, 0, 0, width, height);
+                g.Clear(Color.White);
+                g.DrawImage(prev, 0, 0);
             }
-            bitmap = result;
-            UpdateBitmap();
+            prev.Dispose();
             Invalidate();
-            
+
+        }
+
+        public void Zoom(int width, int height)
+        {
+            CurrentWidth = width; CurrentHeight = height;
+
+            var prev = new Bitmap(bitmap);
+            bitmap = new Bitmap(width, height);
+
+            using (Graphics g = Graphics.FromImage(bitmap))
+            {
+                g.DrawImage(prev, 0, 0, width, height);
+            }
+
+            prev.Dispose();
+            Invalidate();
+
         }
 
         public static void UpdateBitmap()
@@ -70,11 +112,13 @@ namespace MDIPaint
                         Refresh();
                         Graphics g = CreateGraphics();
                         g.DrawEllipse(new Pen(MainForm.Color, MainForm.Width), e.X, e.Y, x - e.X, y - e.Y);
+                        HasPaint = true;
                         break;
                     case 2:
                         Refresh();
                         g = CreateGraphics();
                         g.DrawLine(new Pen(MainForm.Color, MainForm.Width), x, y, e.X, e.Y);
+                        HasPaint = true;
                         break;
                     case 4:
                         g = Graphics.FromImage(bitmap);
@@ -82,6 +126,7 @@ namespace MDIPaint
                         Invalidate();
                         x = e.X;
                         y = e.Y;
+                        HasPaint = true;
                         break;
                     case 5:
                         g = Graphics.FromImage(bitmap);
@@ -89,6 +134,7 @@ namespace MDIPaint
                         Invalidate();
                         x = e.X;
                         y = e.Y;
+                        HasPaint = true;
                         break;
                 }
 
@@ -107,12 +153,14 @@ namespace MDIPaint
                     x = e.X;
                     y = e.Y;
                     Invalidate();
+                    HasPaint = true;
                     break;
                 case 2:
                     g.DrawLine(new Pen(MainForm.Color, MainForm.Width), x, y, e.X, e.Y);
                     x = e.X;
                     y = e.Y;
                     Invalidate();
+                    HasPaint = true;
                     break;
                 case 3:               
                     double beta = 0;       
@@ -127,7 +175,25 @@ namespace MDIPaint
                     }
                     g.DrawLines(new Pen(MainForm.Color, MainForm.Width), points);
                     Invalidate();
+                    HasPaint = true;
                     break;
+            }
+        }
+
+        private void DocumentForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (HasPaint == false)
+            {
+                return;
+            }
+            else
+            {
+                if (e.CloseReason == CloseReason.UserClosing)
+                {
+                    if (MessageBox.Show("Сохранить изменения?", this.Text, MessageBoxButtons.OKCancel,
+       MessageBoxIcon.Warning) == DialogResult.OK)
+                        Program.MainForm.сохранитьКакToolStripMenuItem_Click(sender, e);
+                }
             }
         }
 
