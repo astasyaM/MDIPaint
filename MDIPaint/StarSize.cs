@@ -17,6 +17,9 @@ namespace MDIPaint
         public StarSize()
         {
             InitializeComponent();
+            BeamsTB.Text = DocumentForm.Beams.ToString();
+            RTB.Text = DocumentForm.R.ToString();
+            rTBsmall.Text = DocumentForm.r.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)

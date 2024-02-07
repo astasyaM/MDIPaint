@@ -17,6 +17,8 @@ namespace MDIPaint
         public CanvasSizeForm()
         {
             InitializeComponent();
+            WidthSize.Text = DocumentForm.CurrentWidth.ToString();
+            HeightSize.Text = DocumentForm.CurrentHeight.ToString();
         }
 
         private void OkButton_Click(object sender, EventArgs e)

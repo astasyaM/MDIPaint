@@ -18,18 +18,63 @@ namespace MDIPaint
         public static Color Color { get; set; }
         public static int Width { get; set; }
         public static int Tool { get; set; }
+        public static int Forms {  get; set; }
 
         public MainForm()
         {
             InitializeComponent();
+            сохранитьToolStripMenuItem.Enabled = false;
+            сохранитьКакToolStripMenuItem.Enabled = false;
+            размерХолстаToolStripMenuItem.Enabled = false;
             Color = Color.Black;
             Width = 3;
             Tool = 5;
+            Forms = 0;
+            WidthText.Text = Width.ToString();
+        }
+
+        public void CheckButtons()
+        {
+            if (Forms==0)
+            {
+                сохранитьToolStripMenuItem.Enabled = false;
+                сохранитьКакToolStripMenuItem.Enabled = false;
+                размерХолстаToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                сохранитьToolStripMenuItem.Enabled = true;
+                сохранитьКакToolStripMenuItem.Enabled = true;
+                размерХолстаToolStripMenuItem.Enabled = true;
+            }
         }
 
         private void выходToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            DialogResult dr1 = MessageBox.Show("Вы уверены, что хотите закрыть приложение?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (dr1 == DialogResult.Yes)
+            {
+                var frm = this.MdiChildren.OfType<DocumentForm>().FirstOrDefault();
+                if (frm == null || frm.HasPaint == false)
+                {
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    DialogResult dr = MessageBox.Show("Сохранить изменения?", this.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                    if (dr == DialogResult.Yes)
+                    {
+                        Program.MainForm.сохранитьКакToolStripMenuItem_Click(sender, e);
+                        Environment.Exit(0);
+                    }
+                    else if (dr == DialogResult.No)
+                        Environment.Exit(0);
+                    else
+                        return;
+                }
+            }
+            else
+                return;
         }
 
         private void оПрограммеToolStripMenuItem_Click(object sender, EventArgs e)
@@ -43,6 +88,8 @@ namespace MDIPaint
             var frm = new DocumentForm();
             frm.MdiParent = this;
             frm.Show();
+            Forms += 1;
+            CheckButtons();
         }
 
         private void размерХолстаToolStripMenuItem_Click(object sender, EventArgs e)
@@ -150,7 +197,7 @@ namespace MDIPaint
 
         public void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            var frm = this.MdiChildren.OfType<DocumentForm>().FirstOrDefault();
             SaveFileDialog saveDialog = new SaveFileDialog();
             saveDialog.Filter = "Bitmap Images|*.bmp|JPEG Images|*.jpg";
             saveDialog.Title = "Save Drawing";
@@ -176,11 +223,12 @@ namespace MDIPaint
                 }
 
                 // Сохранение Bitmap в выбранный файл
-                DocumentForm.bitmap.Save(filePath, imageFormat);
+                frm.bitmap.Save(filePath, imageFormat);
 
                 // Обновляем последний сохраненный путь
                 DocumentForm.lastSavedFilePath = filePath;
             }
+            CheckButtons();
 
         }
 
@@ -193,17 +241,19 @@ namespace MDIPaint
                 ImageFormat imageFormat = ImageFormat.Bmp;
 
                 // Перезаписываем файл
-                DocumentForm.bitmap.Save(DocumentForm.lastSavedFilePath, imageFormat);
+                frm.bitmap.Save(DocumentForm.lastSavedFilePath, imageFormat);
             }
             else
             {
                 // Если нет предыдущего пути, вызываем диалог сохранения
                 сохранитьКакToolStripMenuItem_Click(sender, e);
             }
+            CheckButtons();
         }
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Forms += 1;
             Bitmap openImage = null;
             OpenFileDialog openDialog = new OpenFileDialog();
             openDialog.Filter = "Bitmap Images|*.bmp|JPEG Images|*.jpg";
@@ -228,6 +278,55 @@ namespace MDIPaint
                     newChildForm.Show();
                 }
             }
+            CheckButtons();
+        }
+
+        private void каскадомToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.LayoutMdi(System.Windows.Forms.MdiLayout.Cascade);
+        }
+
+        private void слеваНаправоToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.LayoutMdi(System.Windows.Forms.MdiLayout.TileVertical);
+        }
+
+        private void сверхуВнизToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.LayoutMdi(System.Windows.Forms.MdiLayout.TileHorizontal);
+        }
+
+        private void упорядочитьЗначкиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.LayoutMdi(System.Windows.Forms.MdiLayout.ArrangeIcons);
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            DialogResult dr1 = MessageBox.Show("Вы уверены, что хотите закрыть приложение?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (dr1 == DialogResult.Yes)
+            {
+                var frm = this.MdiChildren.OfType<DocumentForm>().FirstOrDefault();
+                if (frm == null || frm.HasPaint == false)
+                {
+                    return;
+                }
+                else
+                {
+                    DialogResult dr = MessageBox.Show("Сохранить изменения?", this.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                    if (dr == DialogResult.Yes)
+                    {
+                        Program.MainForm.сохранитьКакToolStripMenuItem_Click(sender, e);
+                        return;
+                    }
+                    else if (dr == DialogResult.No)
+                        return;
+                    else
+                        e.Cancel = true;
+                }
+            }
+            else
+                e.Cancel = true;
         }
     }
 }

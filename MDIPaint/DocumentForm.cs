@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,7 +21,7 @@ namespace MDIPaint
         public static string lastSavedFilePath;
         private int x, y;
         public bool HasPaint = false;
-        public static Bitmap bitmap;
+        public Bitmap bitmap;
         public static int Beams {  get; set; }
         public static double R {  get; set; }
         public static double r { get; set; }
@@ -36,6 +38,7 @@ namespace MDIPaint
             Beams = 5;
             R = 50;
             r = 25;
+            this.DoubleBuffered = true;
         }
 
         public DocumentForm()
@@ -48,6 +51,7 @@ namespace MDIPaint
             Beams = 5;
             R = 50;
             r = 25;
+            this.DoubleBuffered = true;
             UpdateBitmap();
         }
 
@@ -70,22 +74,29 @@ namespace MDIPaint
 
         public void Zoom(int width, int height)
         {
-            CurrentWidth = width; CurrentHeight = height;
 
-            var prev = new Bitmap(bitmap);
-            bitmap = new Bitmap(width, height);
+            Bitmap originalImage = new Bitmap(bitmap); 
+            Bitmap scaledImage = new Bitmap((int)width, (int)height);
 
-            using (Graphics g = Graphics.FromImage(bitmap))
+            using (Graphics g = Graphics.FromImage(scaledImage))
             {
-                g.DrawImage(prev, 0, 0, width, height);
+                g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                g.DrawImage(
+                    originalImage,
+                    new Rectangle(0, 0, (int)width, (int)height),
+                    new Rectangle(0, 0, originalImage.Width, originalImage.Height),
+                    GraphicsUnit.Pixel);
             }
+            bitmap = scaledImage;
 
-            prev.Dispose();
             Invalidate();
+
+            CurrentHeight = (int)height;
+            CurrentWidth = (int)width;
 
         }
 
-        public static void UpdateBitmap()
+        public void UpdateBitmap()
         {
             for (int Xcount = 0; Xcount < bitmap.Width; Xcount++)
             {
@@ -130,7 +141,9 @@ namespace MDIPaint
                         break;
                     case 5:
                         g = Graphics.FromImage(bitmap);
-                        g.DrawLine(new Pen(MainForm.Color, MainForm.Width), x, y, e.X, e.Y);
+                        Pen pen = new Pen(MainForm.Color, MainForm.Width*2);
+                        g.DrawLine(pen, x, y, e.X, e.Y);
+                        g.FillEllipse(pen.Brush, e.X - MainForm.Width, e.Y - MainForm.Width, MainForm.Width * 2, MainForm.Width*2);
                         Invalidate();
                         x = e.X;
                         y = e.Y;
@@ -184,17 +197,34 @@ namespace MDIPaint
         {
             if (HasPaint == false)
             {
+                MainForm.Forms--;
+                Program.MainForm.CheckButtons();
                 return;
             }
             else
             {
                 if (e.CloseReason == CloseReason.UserClosing)
                 {
-                    if (MessageBox.Show("Сохранить изменения?", this.Text, MessageBoxButtons.OKCancel,
-       MessageBoxIcon.Warning) == DialogResult.OK)
+                    DialogResult dr = MessageBox.Show("Сохранить изменения?", this.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                    if (dr == DialogResult.Yes)
+                    {
                         Program.MainForm.сохранитьКакToolStripMenuItem_Click(sender, e);
+                        MainForm.Forms--;
+                        Program.MainForm.CheckButtons();
+                    }
+                    else if (dr == DialogResult.No)
+                    {
+                        MainForm.Forms--;
+                        Program.MainForm.CheckButtons();
+                        return;
+                    }
+                    else
+                    {
+                        e.Cancel = true;
+                    }
                 }
             }
+            
         }
 
         protected override void OnPaint(PaintEventArgs e)
