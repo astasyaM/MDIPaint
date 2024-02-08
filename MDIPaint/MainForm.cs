@@ -223,7 +223,8 @@ namespace MDIPaint
                 }
 
                 // Сохранение Bitmap в выбранный файл
-                frm.bitmap.Save(filePath, imageFormat);
+                Image img = frm.GetPicture();
+                img.Save(filePath, imageFormat);
 
                 // Обновляем последний сохраненный путь
                 DocumentForm.lastSavedFilePath = filePath;
@@ -241,7 +242,8 @@ namespace MDIPaint
                 ImageFormat imageFormat = ImageFormat.Bmp;
 
                 // Перезаписываем файл
-                frm.bitmap.Save(DocumentForm.lastSavedFilePath, imageFormat);
+                Image img = frm.GetPicture();
+                img.Save(DocumentForm.lastSavedFilePath, imageFormat);
             }
             else
             {

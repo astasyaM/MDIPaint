@@ -21,12 +21,15 @@ namespace MDIPaint
         public static string lastSavedFilePath;
         private int x, y;
         public bool HasPaint = false;
-        public Bitmap bitmap;
         public static int Beams {  get; set; }
         public static double R {  get; set; }
         public static double r { get; set; }
         public static int CurrentWidth { get; set; }
         public static int CurrentHeight {  get; set; }
+        private float CurrentScaleX {  get; set; }
+        private float CurrentScaleY { get; set; }
+        private float BaseScaleW { get; set; }
+        private float BaseScaleH { get; set; }
 
         public DocumentForm(Bitmap image)
         {
@@ -34,11 +37,16 @@ namespace MDIPaint
             lastSavedFilePath = null;
             CurrentHeight = image.Height;
             CurrentWidth = image.Width;
-            bitmap = new Bitmap(image, CurrentWidth, CurrentHeight);
             Beams = 5;
             R = 50;
             r = 25;
-            this.DoubleBuffered = true;
+            pictureBox1.Size = new Size(CurrentWidth, CurrentHeight);
+            pictureBox1.Image = image;
+            pictureBox1.BackColor = System.Drawing.Color.White;
+            CurrentScaleX = 1;
+            CurrentScaleY = 1;
+            BaseScaleH = image.Height;
+            BaseScaleW = image.Width;
         }
 
         public DocumentForm()
@@ -47,63 +55,64 @@ namespace MDIPaint
             lastSavedFilePath = null;
             CurrentWidth = 300;
             CurrentHeight = 300;
-            bitmap = new Bitmap(CurrentWidth, CurrentHeight);
             Beams = 5;
             R = 50;
             r = 25;
-            this.DoubleBuffered = true;
+            pictureBox1.Size = new Size(CurrentWidth, CurrentHeight);
+            pictureBox1.Image = new Bitmap(CurrentWidth, CurrentHeight);
+            pictureBox1.BackColor = System.Drawing.Color.White;
             UpdateBitmap();
+            CurrentScaleX = 1;
+            CurrentScaleY = 1;
+            BaseScaleW = 300;
+            BaseScaleH = 300;
+        }
+
+        public void UpdateBitmap()
+        {
+            Bitmap bitmap = (Bitmap)pictureBox1.Image;
+            for (int Xcount = 0; Xcount < pictureBox1.Image.Width; Xcount++)
+            {
+                for (int Ycount = 0; Ycount < pictureBox1.Image.Height; Ycount++)
+                {
+                    bitmap.SetPixel(Xcount, Ycount, System.Drawing.Color.White);
+                }
+            }
+        }
+
+        public System.Drawing.Image GetPicture()
+        {
+            return pictureBox1.Image;
         }
 
         public void ResizeBitmap(int width, int height)
         {
             CurrentWidth = width; CurrentHeight = height;  
 
-            var prev = new Bitmap(bitmap);
+            var prev = new Bitmap(pictureBox1.Image);
 
-            bitmap = new Bitmap(width, height);
-            using (Graphics g = Graphics.FromImage(bitmap))
+            pictureBox1.Image = new Bitmap(width, height);
+            pictureBox1.Size = new Size(width, height);
+            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
             {
                 g.Clear(Color.White);
                 g.DrawImage(prev, 0, 0);
             }
             prev.Dispose();
+            pictureBox1.Invalidate();
             Invalidate();
 
         }
 
         public void Zoom(int width, int height)
         {
-
-            Bitmap originalImage = new Bitmap(bitmap); 
-            Bitmap scaledImage = new Bitmap((int)width, (int)height);
-
-            using (Graphics g = Graphics.FromImage(scaledImage))
+            if (width>50 && height>50 && width<1200 && height<1200)
             {
-                g.InterpolationMode = InterpolationMode.NearestNeighbor;
-                g.DrawImage(
-                    originalImage,
-                    new Rectangle(0, 0, (int)width, (int)height),
-                    new Rectangle(0, 0, originalImage.Width, originalImage.Height),
-                    GraphicsUnit.Pixel);
-            }
-            bitmap = scaledImage;
-
-            Invalidate();
-
-            CurrentHeight = (int)height;
-            CurrentWidth = (int)width;
-
-        }
-
-        public void UpdateBitmap()
-        {
-            for (int Xcount = 0; Xcount < bitmap.Width; Xcount++)
-            {
-                for (int Ycount = 0; Ycount < bitmap.Height; Ycount++)
-                {
-                    bitmap.SetPixel(Xcount, Ycount, Color.White);
-                }
+                pictureBox1.Size = new Size(width, height);
+                CurrentScaleX = BaseScaleW / width; CurrentScaleY = BaseScaleH / height;
+                CurrentHeight = height;
+                CurrentWidth = width;
+                pictureBox1.Refresh();
             }
         }
 
@@ -117,34 +126,66 @@ namespace MDIPaint
         {
             if (e.Button == MouseButtons.Left)
             {
+                int baseX = (Int32)(e.X * CurrentScaleX);
+                int baseY = (Int32)(e.Y * CurrentScaleY);
+
+                int endX = (Int32)(x * CurrentScaleX);
+                int endY = (Int32)(y * CurrentScaleY);
+
+                int w = (Int32)(MainForm.Width / CurrentScaleX);
+
                 switch (MainForm.Tool)
                 {
                     case 1:
                         Refresh();
-                        Graphics g = CreateGraphics();
-                        g.DrawEllipse(new Pen(MainForm.Color, MainForm.Width), e.X, e.Y, x - e.X, y - e.Y);
+                        Graphics g = pictureBox1.CreateGraphics();
+                        
+                        g.DrawEllipse(new Pen(MainForm.Color, w*2), e.X, e.Y, x - e.X, y - e.Y);
                         HasPaint = true;
                         break;
                     case 2:
                         Refresh();
-                        g = CreateGraphics();
-                        g.DrawLine(new Pen(MainForm.Color, MainForm.Width), x, y, e.X, e.Y);
+                        g = pictureBox1.CreateGraphics();
+                        g.DrawLine(new Pen(MainForm.Color, w*2), x, y, e.X, e.Y);
+                        Invalidate();
+                        HasPaint = true;
+                        break;
+                    case 3:
+                        Refresh();
+                        g = pictureBox1.CreateGraphics();
+                        double beta = 0;
+                        double x0 = e.X, y0 = e.Y;
+                        PointF[] points = new PointF[2 * Beams + 1];
+                        double a = beta, da = Math.PI / Beams, l;
+                        for (int k = 0; k < 2 * Beams + 1; k++)
+                        {
+                            l = k % 2 == 0 ? r : R;
+                            points[k] = new PointF((float)(x0 + l * Math.Cos(a)), (float)(y0 + l * Math.Sin(a)));
+                            a += da;
+                        }
+                        g.DrawLines(new Pen(MainForm.Color, w * 2), points);
+                        Invalidate();
+                        pictureBox1.Invalidate();
                         HasPaint = true;
                         break;
                     case 4:
-                        g = Graphics.FromImage(bitmap);
-                        g.DrawLine(new Pen(Color.White, MainForm.Width+3), x, y, e.X, e.Y);
+                        g = Graphics.FromImage(pictureBox1.Image);
+                        Pen pen = new Pen(Color.White, MainForm.Width * 2 + 3);
+                        g.DrawLine(pen, endX, endY, baseX, baseY);
+                        g.FillEllipse(pen.Brush, (e.X - MainForm.Width) * CurrentScaleX, (e.Y - MainForm.Width) * CurrentScaleY, MainForm.Width * 2, MainForm.Width * 2);
                         Invalidate();
+                        pictureBox1.Invalidate();
                         x = e.X;
                         y = e.Y;
                         HasPaint = true;
                         break;
                     case 5:
-                        g = Graphics.FromImage(bitmap);
-                        Pen pen = new Pen(MainForm.Color, MainForm.Width*2);
-                        g.DrawLine(pen, x, y, e.X, e.Y);
-                        g.FillEllipse(pen.Brush, e.X - MainForm.Width, e.Y - MainForm.Width, MainForm.Width * 2, MainForm.Width*2);
+                        g = Graphics.FromImage(pictureBox1.Image);
+                        pen = new Pen(MainForm.Color, MainForm.Width*2);
+                        g.DrawLine(pen, endX, endY, baseX, baseY);
+                        g.FillEllipse(pen.Brush, (e.X - MainForm.Width)*CurrentScaleX, (e.Y - MainForm.Width)*CurrentScaleY, MainForm.Width * 2, MainForm.Width*2);
                         Invalidate();
+                        pictureBox1.Invalidate();
                         x = e.X;
                         y = e.Y;
                         HasPaint = true;
@@ -157,27 +198,35 @@ namespace MDIPaint
 
         private void DocumentForm_MouseUp(object sender, MouseEventArgs e)
         {
-            Graphics g = Graphics.FromImage(bitmap);
+            Graphics g = Graphics.FromImage(pictureBox1.Image);
 
-            switch(MainForm.Tool)
+            int baseX = (Int32)(e.X * CurrentScaleX);
+            int baseY = (Int32)(e.Y * CurrentScaleY);
+
+            int endX = (Int32)(x * CurrentScaleX);
+            int endY = (Int32)(y * CurrentScaleY);
+
+            switch (MainForm.Tool)
             {
                 case 1:
-                    g.DrawEllipse(new Pen(MainForm.Color, MainForm.Width), e.X, e.Y, x - e.X, y - e.Y);
-                    x = e.X;
-                    y = e.Y;
+                    g.DrawEllipse(new Pen(MainForm.Color, MainForm.Width*2), baseX, baseY, endX - baseX, endY - baseY);
+                    x = baseX;
+                    y = baseY;
                     Invalidate();
+                    pictureBox1.Invalidate();
                     HasPaint = true;
                     break;
                 case 2:
-                    g.DrawLine(new Pen(MainForm.Color, MainForm.Width), x, y, e.X, e.Y);
-                    x = e.X;
-                    y = e.Y;
+                    g.DrawLine(new Pen(MainForm.Color, MainForm.Width * 2), endX, endY, baseX, baseY);
+                    x = baseX;
+                    y = baseY;
                     Invalidate();
+                    pictureBox1.Invalidate();
                     HasPaint = true;
                     break;
                 case 3:               
                     double beta = 0;       
-                    double x0 = e.X, y0 = e.Y; 
+                    double x0 = baseX, y0 = baseY; 
                     PointF[] points = new PointF[2 * Beams + 1];
                     double a = beta, da = Math.PI / Beams, l;
                     for (int k = 0; k < 2 * Beams + 1; k++)
@@ -186,8 +235,31 @@ namespace MDIPaint
                         points[k] = new PointF((float)(x0 + l * Math.Cos(a)), (float)(y0 + l * Math.Sin(a)));
                         a += da;
                     }
-                    g.DrawLines(new Pen(MainForm.Color, MainForm.Width), points);
+                    g.DrawLines(new Pen(MainForm.Color, MainForm.Width*2), points);
                     Invalidate();
+                    pictureBox1.Invalidate();
+                    HasPaint = true;
+                    break;
+                case 4:
+                    g = Graphics.FromImage(pictureBox1.Image);
+                    Pen pen = new Pen(Color.White, MainForm.Width * 2 + 3);
+                    g.DrawLine(pen, endX, endY, baseX, baseY);
+                    g.FillEllipse(pen.Brush, baseX - MainForm.Width, baseY - MainForm.Width, MainForm.Width * 2, MainForm.Width * 2);
+                    Invalidate();
+                    pictureBox1.Invalidate();
+                    x = baseX;
+                    y = baseY;
+                    HasPaint = true;
+                    break;
+                case 5:
+                    g = Graphics.FromImage(pictureBox1.Image);
+                    pen = new Pen(MainForm.Color, MainForm.Width * 2);
+                    g.DrawLine(pen, endX, endY, baseX, baseY);
+                    g.FillEllipse(pen.Brush, baseX - MainForm.Width, baseY - MainForm.Width, MainForm.Width * 2, MainForm.Width * 2);
+                    Invalidate();
+                    pictureBox1.Invalidate();
+                    x = baseX;
+                    y = baseY;
                     HasPaint = true;
                     break;
             }
@@ -227,11 +299,11 @@ namespace MDIPaint
             
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        private void DocumentForm_FormC(object sender, FormClosingEventArgs e)
         {
-            base.OnPaint(e);
-            e.Graphics.DrawImage(bitmap, 0, 0);
+
         }
+
 
     }
 }
