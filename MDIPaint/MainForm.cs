@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace MDIPaint
 {
@@ -23,26 +24,28 @@ namespace MDIPaint
         public MainForm()
         {
             InitializeComponent();
-            сохранитьToolStripMenuItem.Enabled = false;
-            сохранитьКакToolStripMenuItem.Enabled = false;
-            размерХолстаToolStripMenuItem.Enabled = false;
             Color = Color.Black;
             Width = 3;
             Tool = 5;
             Forms = 0;
             WidthText.Text = Width.ToString();
+            CheckButtons();
         }
 
         public void CheckButtons()
         {
             if (Forms==0)
             {
+                ZoomIn.Enabled = false;
+                ZoomOut.Enabled = false;
                 сохранитьToolStripMenuItem.Enabled = false;
                 сохранитьКакToolStripMenuItem.Enabled = false;
                 размерХолстаToolStripMenuItem.Enabled = false;
             }
             else
             {
+                ZoomIn.Enabled = true;
+                ZoomOut.Enabled = true;
                 сохранитьToolStripMenuItem.Enabled = true;
                 сохранитьКакToolStripMenuItem.Enabled = true;
                 размерХолстаToolStripMenuItem.Enabled = true;
@@ -329,6 +332,16 @@ namespace MDIPaint
             }
             else
                 e.Cancel = true;
+        }
+
+        private void WidthText_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if ((e.KeyChar >= 59 || e.KeyChar <= 47) && e.KeyChar != 8)
+            {
+                e.Handled = true;
+                DialogResult dr = MessageBox.Show("Введите число", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
         }
     }
 }

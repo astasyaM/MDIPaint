@@ -34,5 +34,23 @@ namespace MDIPaint
         {
             Close();
         }
+
+        private void WidthSize_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if ((e.KeyChar >= 59 || e.KeyChar <= 47) && e.KeyChar != 8)
+            {
+                e.Handled = true;
+                DialogResult dr = MessageBox.Show("Введите число", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void HeightSize_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if ((e.KeyChar >= 59 || e.KeyChar <= 47) && e.KeyChar != 8)
+            {
+                e.Handled = true;
+                DialogResult dr = MessageBox.Show("Введите число", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
     }
 }

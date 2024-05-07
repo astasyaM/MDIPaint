@@ -87,8 +87,6 @@ namespace MDIPaint
 
         public void ResizeBitmap(int width, int height)
         {
-            CurrentWidth = width; CurrentHeight = height;  
-
             var prev = new Bitmap(pictureBox1.Image);
 
             pictureBox1.Image = new Bitmap(width, height);
@@ -96,12 +94,12 @@ namespace MDIPaint
             using (Graphics g = Graphics.FromImage(pictureBox1.Image))
             {
                 g.Clear(Color.White);
-                g.DrawImage(prev, 0, 0);
+                g.DrawImage(prev, 0, 0, CurrentWidth, CurrentHeight);
             }
             prev.Dispose();
             pictureBox1.Invalidate();
             Invalidate();
-
+            CurrentWidth = width; CurrentHeight = height;
         }
 
         public void Zoom(int width, int height)
@@ -297,11 +295,6 @@ namespace MDIPaint
                 }
             }
             
-        }
-
-        private void DocumentForm_FormC(object sender, FormClosingEventArgs e)
-        {
-
         }
 
 

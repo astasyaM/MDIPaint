@@ -71,6 +71,7 @@
             this.BeamsTB.Name = "BeamsTB";
             this.BeamsTB.Size = new System.Drawing.Size(89, 20);
             this.BeamsTB.TabIndex = 3;
+            this.BeamsTB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.BeamsTB_KeyPress);
             // 
             // rTBsmall
             // 
@@ -78,6 +79,7 @@
             this.rTBsmall.Name = "rTBsmall";
             this.rTBsmall.Size = new System.Drawing.Size(89, 20);
             this.rTBsmall.TabIndex = 4;
+            this.rTBsmall.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.rTBsmall_KeyPress);
             // 
             // RTB
             // 
@@ -85,6 +87,7 @@
             this.RTB.Name = "RTB";
             this.RTB.Size = new System.Drawing.Size(89, 20);
             this.RTB.TabIndex = 5;
+            this.RTB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.RTB_KeyPress);
             // 
             // button1
             // 

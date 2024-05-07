@@ -42,6 +42,7 @@
             this.HeightSize.Name = "HeightSize";
             this.HeightSize.Size = new System.Drawing.Size(61, 20);
             this.HeightSize.TabIndex = 0;
+            this.HeightSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HeightSize_KeyPress);
             // 
             // label1
             // 
@@ -67,6 +68,7 @@
             this.WidthSize.Name = "WidthSize";
             this.WidthSize.Size = new System.Drawing.Size(61, 20);
             this.WidthSize.TabIndex = 2;
+            this.WidthSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.WidthSize_KeyPress);
             // 
             // OkButton
             // 
@@ -95,7 +97,6 @@
             this.AcceptButton = this.OkButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.CancelButton;
             this.ClientSize = new System.Drawing.Size(344, 117);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.OkButton);
