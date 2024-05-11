@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PluginInterface;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -30,6 +31,7 @@ namespace MDIPaint
         private float CurrentScaleY { get; set; }
         private float BaseScaleW { get; set; }
         private float BaseScaleH { get; set; }
+        public static PictureBox pb {  get; set; }
 
         public DocumentForm(Bitmap image)
         {
@@ -47,6 +49,7 @@ namespace MDIPaint
             CurrentScaleY = 1;
             BaseScaleH = image.Height;
             BaseScaleW = image.Width;
+            pb = pictureBox1;
         }
 
         public DocumentForm()
@@ -66,6 +69,7 @@ namespace MDIPaint
             CurrentScaleY = 1;
             BaseScaleW = 300;
             BaseScaleH = 300;
+            pb = pictureBox1;
         }
 
         public void UpdateBitmap()

@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -57,6 +58,12 @@
     </Compile>
     <Compile Include="CanvasSizeForm.Designer.cs">
       <DependentUpon>CanvasSizeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ChoosePlagins.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChoosePlagins.Designer.cs">
+      <DependentUpon>ChoosePlagins.cs</DependentUpon>
     </Compile>
     <Compile Include="DocumentForm.cs">
       <SubType>Form</SubType>
@@ -83,6 +90,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CanvasSizeForm.resx">
       <DependentUpon>CanvasSizeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChoosePlagins.resx">
+      <DependentUpon>ChoosePlagins.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DocumentForm.resx">
       <DependentUpon>DocumentForm.cs</DependentUpon>
@@ -114,6 +124,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DateGeo\DateGeo.csproj">
+      <Project>{49545c37-3d43-486d-b84f-a30bac6222e7}</Project>
+      <Name>DateGeo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MedianF\MedianF.csproj">
+      <Project>{6323effc-0c38-4cec-88b2-b82d37484bfc}</Project>
+      <Name>MedianF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PluginInterface\PluginInterface.csproj">
+      <Project>{7da7bc47-bcc1-4220-9d8f-2221849b0c0f}</Project>
+      <Name>PluginInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformations\BlackWhite.csproj">
+      <Project>{1582ada1-3c23-4c6d-99c1-a68499d819c1}</Project>
+      <Name>BlackWhite</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

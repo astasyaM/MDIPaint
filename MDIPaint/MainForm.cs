@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
+using PluginInterface;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace MDIPaint
@@ -21,6 +27,8 @@ namespace MDIPaint
         public static int Tool { get; set; }
         public static int Forms {  get; set; }
 
+        public static Dictionary<string, IPlugin> plugins = new Dictionary<string, IPlugin>();
+
         public MainForm()
         {
             InitializeComponent();
@@ -30,6 +38,132 @@ namespace MDIPaint
             Forms = 0;
             WidthText.Text = Width.ToString();
             CheckButtons();
+            FindPlugins();
+            CreatePluginsMenu();
+        }
+
+        void FindPlugins()
+        {
+            try
+            {
+                string pluginsConfigFilePath = "Plugins.config"; 
+
+                // Проверяем существование файла конфигурации
+                if (File.Exists(pluginsConfigFilePath))
+                {
+                    // Файл существует, загружаем его содержимое
+                    XmlDocument xmlDoc = new XmlDocument();
+                    xmlDoc.Load(pluginsConfigFilePath);
+                    XmlNode rootNode = xmlDoc.SelectSingleNode("Plugins");
+
+                    if (rootNode != null && rootNode.ChildNodes.Count > 0)
+                    {
+                        foreach (XmlNode pluginNode in rootNode.ChildNodes)
+                        {
+                            string pluginFilePath = pluginNode.InnerText;
+                            Assembly assembly = Assembly.LoadFrom(pluginFilePath);
+
+                            foreach (Type type in assembly.GetTypes())
+                            {
+                                // Проверяем, реализует ли тип интерфейс IPlugin
+                                if (typeof(IPlugin).IsAssignableFrom(type))
+                                {
+                                    IPlugin plugin = (IPlugin)Activator.CreateInstance(type);
+                                    plugins.Add(plugin.Name, plugin);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        xmlDoc = new XmlDocument();
+                        rootNode = xmlDoc.CreateElement("Plugins");
+                        xmlDoc.AppendChild(rootNode);
+
+                        string folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                        string[] files = Directory.GetFiles(folder, "*.dll");
+
+                        foreach (string file in files)
+                        {
+                            Assembly assembly = Assembly.LoadFrom(file);
+
+                            foreach (Type type in assembly.GetTypes())
+                            {
+                                Type iface = type.GetInterface("PluginInterface.IPlugin");
+
+                                if (iface != null)
+                                {
+                                    IPlugin plugin = (IPlugin)Activator.CreateInstance(type);
+
+                                    XmlNode pluginNode = xmlDoc.CreateElement("Plugin");
+                                    pluginNode.InnerText = file;
+                                    rootNode.AppendChild(pluginNode);
+                                    plugins.Add(plugin.Name, plugin);
+                                }
+                            }
+                        }
+                        xmlDoc.Save(pluginsConfigFilePath);
+                    }
+
+                }
+
+                else
+                {
+                    XmlDocument xmlDoc = new XmlDocument();
+                    XmlNode rootNode = xmlDoc.CreateElement("Plugins");
+                    xmlDoc.AppendChild(rootNode);
+
+                    string folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    string[] files = Directory.GetFiles(folder, "*.dll");
+
+                    foreach (string file in files)
+                    {
+                        Assembly assembly = Assembly.LoadFrom(file);
+
+                        foreach (Type type in assembly.GetTypes())
+                        {
+                            Type iface = type.GetInterface("PluginInterface.IPlugin");
+
+                            if (iface != null)
+                            {
+                                IPlugin plugin = (IPlugin)Activator.CreateInstance(type);
+
+                                XmlNode pluginNode = xmlDoc.CreateElement("Plugin");
+                                pluginNode.InnerText = file;
+                                rootNode.AppendChild(pluginNode);
+                                plugins.Add(plugin.Name, plugin);
+                            }
+                        }
+                    }
+                    xmlDoc.Save(pluginsConfigFilePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка загрузки плагина\n" + ex.Message);
+            }
+        }
+
+        private void CreatePluginsMenu()
+        {
+            foreach (var p in plugins)
+            {
+                var item = фильтрыToolStripMenuItem.DropDownItems.Add(p.Value.Name);
+                item.Click += OnPluginClick;
+            }
+        }
+
+        private void OnPluginClick(object sender, EventArgs args)
+        {
+            IPlugin plugin = plugins[((ToolStripMenuItem)sender).Text];
+            plugin.Transform((Bitmap)DocumentForm.pb.Image);
+            DocumentForm.pb.Refresh();
+        }
+
+        private void добавитьФильтрыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FindPlugins();
+            CreatePluginsMenu();
         }
 
         public void CheckButtons()
@@ -343,5 +477,7 @@ namespace MDIPaint
             }
 
         }
+
+        
     }
 }
