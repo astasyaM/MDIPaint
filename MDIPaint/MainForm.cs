@@ -39,14 +39,14 @@ namespace MDIPaint
             WidthText.Text = Width.ToString();
             CheckButtons();
             FindPlugins();
-            CreatePluginsMenu();
         }
 
-        void FindPlugins()
+        public void FindPlugins()
         {
             try
             {
-                string pluginsConfigFilePath = "Plugins.config"; 
+                string pluginsConfigFilePath = "Plugins.config";
+                plugins.Clear();
 
                 // Проверяем существование файла конфигурации
                 if (File.Exists(pluginsConfigFilePath))
@@ -74,37 +74,6 @@ namespace MDIPaint
                             }
                         }
                     }
-                    else
-                    {
-                        xmlDoc = new XmlDocument();
-                        rootNode = xmlDoc.CreateElement("Plugins");
-                        xmlDoc.AppendChild(rootNode);
-
-                        string folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                        string[] files = Directory.GetFiles(folder, "*.dll");
-
-                        foreach (string file in files)
-                        {
-                            Assembly assembly = Assembly.LoadFrom(file);
-
-                            foreach (Type type in assembly.GetTypes())
-                            {
-                                Type iface = type.GetInterface("PluginInterface.IPlugin");
-
-                                if (iface != null)
-                                {
-                                    IPlugin plugin = (IPlugin)Activator.CreateInstance(type);
-
-                                    XmlNode pluginNode = xmlDoc.CreateElement("Plugin");
-                                    pluginNode.InnerText = file;
-                                    rootNode.AppendChild(pluginNode);
-                                    plugins.Add(plugin.Name, plugin);
-                                }
-                            }
-                        }
-                        xmlDoc.Save(pluginsConfigFilePath);
-                    }
-
                 }
 
                 else
@@ -137,6 +106,7 @@ namespace MDIPaint
                     }
                     xmlDoc.Save(pluginsConfigFilePath);
                 }
+                CreatePluginsMenu();
             }
             catch (Exception ex)
             {
@@ -144,8 +114,17 @@ namespace MDIPaint
             }
         }
 
-        private void CreatePluginsMenu()
+        public void CreatePluginsMenu()
         {
+            for (int i = фильтрыToolStripMenuItem.DropDownItems.Count - 1; i >= 0; i--)
+            {
+                var item = фильтрыToolStripMenuItem.DropDownItems[i];
+                if (item.Text != "Редактировать загруженные фильтры...")
+                {
+                    фильтрыToolStripMenuItem.DropDownItems.Remove(item);
+                }
+            }
+
             foreach (var p in plugins)
             {
                 var item = фильтрыToolStripMenuItem.DropDownItems.Add(p.Value.Name);
@@ -162,8 +141,9 @@ namespace MDIPaint
 
         private void добавитьФильтрыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FindPlugins();
-            CreatePluginsMenu();
+            var frm = new ChoosePlagins();
+            frm.Owner = this;
+            frm.ShowDialog();
         }
 
         public void CheckButtons()
