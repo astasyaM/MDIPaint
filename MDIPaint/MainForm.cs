@@ -134,9 +134,14 @@ namespace MDIPaint
 
         private void OnPluginClick(object sender, EventArgs args)
         {
-            IPlugin plugin = plugins[((ToolStripMenuItem)sender).Text];
-            plugin.Transform((Bitmap)DocumentForm.pb.Image);
-            DocumentForm.pb.Refresh();
+            if (Forms > 0)
+            {
+                IPlugin plugin = plugins[((ToolStripMenuItem)sender).Text];
+                plugin.Transform((Bitmap)DocumentForm.pb.Image);
+                DocumentForm.pb.Refresh();
+            }
+            else
+                MessageBox.Show("Отсутствуют изображения, к которым можно применить фильтр.");
         }
 
         private void добавитьФильтрыToolStripMenuItem_Click(object sender, EventArgs e)
