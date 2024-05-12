@@ -44,7 +44,8 @@ namespace MDIPaint
                     if (iface != null)
                     {
                         IPlugin plugin = (IPlugin)Activator.CreateInstance(type);
-                        AssemblyFileVersionAttribute fileVersionAttribute = (AssemblyFileVersionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyFileVersionAttribute));
+                        AssemblyFileVersionAttribute fileVersionAttribute = 
+                            (AssemblyFileVersionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyFileVersionAttribute));
                         string fileVersion = fileVersionAttribute != null ? fileVersionAttribute.Version : "";
                         CheckBox checkbox = new CheckBox();
                         checkbox.Text = $"{plugin.Name}\nАвтор: {plugin.Author}\nv.{fileVersion}";

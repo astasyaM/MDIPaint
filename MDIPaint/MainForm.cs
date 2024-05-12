@@ -65,7 +65,6 @@ namespace MDIPaint
 
                             foreach (Type type in assembly.GetTypes())
                             {
-                                // Проверяем, реализует ли тип интерфейс IPlugin
                                 if (typeof(IPlugin).IsAssignableFrom(type))
                                 {
                                     IPlugin plugin = (IPlugin)Activator.CreateInstance(type);

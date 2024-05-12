@@ -41,7 +41,8 @@ namespace DateGeo
             };
 
             GraphicsPath path = new GraphicsPath();
-            path.AddString(strAdd, font.FontFamily, (int)font.Style, font.Size, new PointF(bitmap.Width - 10, bitmap.Height - 20), stringFormat);
+            path.AddString(strAdd, font.FontFamily, (int)font.Style, 
+                font.Size, new PointF(bitmap.Width - 10, bitmap.Height - 20), stringFormat);
 
             using (Graphics graphics = Graphics.FromImage(bitmap))
             {
